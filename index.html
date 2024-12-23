@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casino</title>
+    <style>
+        body {
+            background-image: url('./image/Background.jpg');
+            background-size: cover;
+
+            font-family: Arial, sans-serif;
+            width: 900px;
+            margin: auto;
+        }
+
+        #bank{
+            text-align: left;
+            position: fixed;
+            right: 10px;
+            width: 160px;
+            color: white;
+        }
+
+        #image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px; 
+        }
+
+        img {
+            width: auto; 
+            max-width: 200px; 
+            height: auto;
+            border-radius: 10px;
+            margin: 0 10px; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #Casino {
+            margin-bottom: 20px;
+            margin-top: 50px;
+
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #Baccarat, #Blackjack, #Roulette{
+            animation: glow 5s infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 0px yellow);
+            }
+            50% {
+                filter: drop-shadow(0 0 10px yellow);
+            }
+        }
+
+        #Baccarat:hover, #Blackjack:hover, #Roulette:hover  {
+            animation: none;
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px yellow);
+        }
+
+        #popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            color: black;
+            padding: 20px;
+            z-index: 1001;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .close-button {
+            background-color: #d9534f; 
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .close-button:hover {
+            background-color: #c9302c;
+        } 
+
+        button {
+            font-size: 1em;
+            padding: 10px 20px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            opacity: 0.9; 
+        }
+
+        #reset {
+            width: 200px;
+            background-color: #d9534f;
+            color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+    <h2 id="bank" style="top: 10px;">Bank: </h2>
+
+    <img id="Casino" src="./image/Casino.png">
+    <br>
+
+    <hr style="background-color: gold; height: 1px; border: none;">
+
+    <div id="image-container">
+        <a href="./baccarat/baccarat.html"><img src="./image/Baccarat.png" id="Baccarat"></a>
+        <a href="./blackjack/blackjack.html"><img src="./image/Blackjack.png" id="Blackjack"></a>
+        <a href="./roulette/roulette.html"><img src="./image/Roulette.png" id="Roulette"></a>
+    </div>
+
+    <button id="reset" style="display: none;" onclick="showPopUp()"> Reset </button>
+
+    <!-- pop up message when you are bankrupt -->
+    <div id="popup-overlay"></div>
+    <div id="popup">
+        <h4>Your bank money is reset to 1000. </h4>
+        <button class="close-button" onclick="closePopup()">Ok</button>
+    </div>
+
+</body>
+<script>
+    window.onload = function() {
+        // Retrieve bank money info from local storage
+        if (typeof(Storage) !== "undefined") {
+            bank = localStorage.getItem("bank") ? parseInt(localStorage.getItem("bank")) : 1000;
+            document.getElementById("bank").innerHTML = `Bank: ${bank}`;
+            if(bank <= 0){
+                document.getElementById("reset").style.display = "block";
+            }
+        } else {
+            document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
+        }
+    }
+
+    function showPopUp(){
+        document.getElementById('popup').style.display = 'block';
+        document.getElementById('popup-overlay').style.display = 'block';
+        // Reset the bank money to 1000
+        bank = 1000; 
+        localStorage.setItem("bank", bank);
+        document.getElementById("bank").innerHTML = `Bank: ${bank}`;
+        document.getElementById("reset").style.display = "none";
+    }
+
+    function closePopup() {
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('popup-overlay').style.display = 'none';
+    }
+    
+</script>
+</html>

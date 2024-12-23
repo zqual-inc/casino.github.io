@@ -1,0 +1,186 @@
+body {
+    background-image: url("../image/Background.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+
+    background-size: cover;
+    font-family: Arial, sans-serif;
+    text-align: center;
+
+    background-color: #f4f4f4;
+    background-color: green;
+    margin: auto;
+    width: 900px;
+}
+
+#bank, #pot{
+    text-align: left;
+    position: fixed;
+    right: 10px;
+    width: 160px;
+    color: white;
+}
+
+input[type="number"] {
+    padding: 8px;
+    width: 230px;
+    margin: 30px;
+    margin-bottom: 50px;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="number"]:focus {
+    border-color: #ffcc00;
+    box-shadow: 0 0 10px #ffcc00;
+}
+
+.roulette-container {
+    position: relative;
+    display: inline-block;
+    margin: auto;
+}
+
+.roulette-wheel {
+    width: 300px;
+    height: 300px;
+    background-image: url('roulette.jpg');
+    background-size: cover;
+    border-radius: 50%;
+    transition: transform 3s ease-out;
+    position: relative; 
+    margin-bottom: 45px;
+    z-index: 1; 
+}
+
+
+.triangle-pin {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    margin-left: -10px;
+    width: 0;
+    height: 40px;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 40px solid red; 
+    z-index: 2;
+}
+
+button {
+    font-size: 1em;
+    padding: 10px 20px;
+    margin: 3px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    opacity: 0.9; 
+}
+#Even {
+    background-color: #3498db; /* Blue */
+    color: white;
+}
+
+#Odd {
+    background-color: #9b59b6; 
+    color: white;
+}
+
+#Red {
+    background-color: red;
+    color: white;
+}
+
+#Black {
+    background-color: black; 
+    color: white;
+}
+
+#Big {
+    background-color: #1abc9c; 
+    color: white;
+}
+
+#Small {
+    background-color: #f1c40f; 
+    color: white;
+}
+
+#Exact {
+    background-color: #e67e22; 
+    color: white;
+}
+
+#result {
+    font-size: 2em;
+    font-weight: bold;
+    color: #ffcc00;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.backbutton {
+    background-color: gray;
+    position: absolute; 
+    left: 1%; 
+    bottom: 2%; 
+    width: 5%;
+    border: black solid 2px;
+}
+
+.backbutton:hover {
+    transform: scale(1.1);  
+}
+
+.backbutton:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+}
+
+.numbers-table {
+    border-collapse: collapse;
+    text-align: center;
+    width: 600px;
+    background-color: lightgray;
+    margin: auto;
+}
+
+.number-cell {
+    border: 1px solid #000;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.number-cell:hover {
+    background-color: #f0f0f0;
+}
+
+#processTable {
+    border-collapse: collapse;
+    margin-left: auto; 
+    margin-right: auto;
+    color: black;
+}
+
+#processTable th, #processTable td {
+    border: 1px solid black;
+    text-align: center;
+    background-color: lightgray;
+    padding: 3px;
+}
+
+#showProcessTable {
+    position: fixed; 
+    left: 20px;
+    top: 5px;
+    background-color: lightpink;
+}

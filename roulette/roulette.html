@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Roulette </title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide|Sofia|Trirong">
+    <link rel="stylesheet" href="roulette.css">
+</head>
+<body>
+    <h1 style="font-family: Sofia; font-size: 3em; color:rgb(255, 132, 0) ; margin: 15px;"> Roulette </h1>
+
+    <!-- show or hide game history -->
+    <button id= "showProcessTable" onclick="showProcessTable()"> History </button>
+
+    <h2 id="bank" style="top: 10px;">Bank: </h2>
+    <h2 id="pot" style="top: 50px;">Pot: </h2>
+
+    <p id="count" style="color: lightgray; font-size: large;" >How much money do you want to bet?</p>
+    <input id="inputBet" type="number" placeholder="Enter a positive number">
+
+    <br>
+
+    <div class="roulette-container">
+        <div class="triangle-pin" id="trianglePin"></div>
+        <div class="roulette-wheel" id="rouletteWheel"></div>
+    </div>
+    <br>
+
+    <div id="Game-Button"> 
+        <button id="Even" onclick="spinWheel('Even', -1)">Even</button>
+        <button id="Odd" onclick="spinWheel('Odd', -1)">Odd</button>
+        <button id="Red" onclick="spinWheel('Red', -1)">Red</button>
+        <button id="Black" onclick="spinWheel('Black', -1)">Black</button>
+        <button id="Big" onclick="spinWheel('Big', -1)">Big Number</button>
+        <button id="Small" onclick="spinWheel('Small', -1)">Small Number</button>
+        <button id="Exact" onclick="showNumbers()"> Exact Number </button>
+        <br>
+    </div>
+    <br>
+
+    <div id="numbers" style="display: none;"></div>
+
+    <div id="result"></div>
+
+    <!-- game history would only record the last 20 steps -->
+    <table id="processTable" style="display: none;">
+        <tr><th colspan="6">Game History</th></tr>
+        <tr>
+            <th>Step</th>
+            <th>Action</th>
+            <th>Winning Number</th>
+            <th>Result</th>
+            <th>Bank</th>
+        </tr>
+    </table>
+
+    <a href="../index.html"><img class="backbutton" src="../image/back.png"></a>
+
+</body>
+
+<script>
+    let rotationDegree = -360/76, chips, stepCounter=0;
+
+    const numbers = [
+        0, 1, 13, 36, 24, 3, 15, 34, 22, 5, 17, 32, 20, 7, 11, 30, 26, 9, 28,
+        0, 2, 14, 35, 23, 4, 16, 33, 21, 6, 18, 31, 19, 8, 12, 29, 25, 10, 27
+    ];
+
+    const redNumbers = [1, 36, 3, 34, 5, 32, 7, 30, 9, 14, 23, 16, 21, 18, 19, 12, 25, 27];
+    const blackNumbers = [13, 24, 15, 22, 17, 20, 11, 26, 28, 2, 35, 4, 33, 6, 31, 8, 29, 10];
+
+    const numbersContainer = document.getElementById("numbers");
+
+    const table = document.createElement("table");
+    table.className = "numbers-table";
+
+    table.innerHTML = "<th colspan=6 > Please choose a desire number </th>";
+
+    let row;
+    for (let i = 1; i <= 36; i++) {
+        // Create a new row every 6 numbers
+        if (i % 6 === 1) {
+            row = document.createElement("tr");
+            table.appendChild(row);
+        }
+
+        // Create a table cell
+        const cell = document.createElement("td");
+        cell.id = `number${i}`;
+        cell.className = "number-cell";
+        cell.textContent = i;
+
+        // Add click event listener to each cell
+        cell.addEventListener("click", function () {
+            spinWheel('Exact', i); 
+        });
+
+        row.appendChild(cell);
+    }
+
+    // Append the table to the container
+    numbersContainer.appendChild(table);
+
+    window.onload = function() {
+        // Retrieve bank money info from local storage
+        if (typeof(Storage) !== "undefined") {
+            bank = localStorage.getItem("bank") ? parseInt(localStorage.getItem("bank")) : 1000;
+            document.getElementById("bank").innerHTML = `Bank: ${bank}`;
+        } else {
+            document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
+        }
+    }
+
+    function spinWheel(movement, number) {
+        
+        chips = parseInt(document.getElementById("inputBet").value);
+
+        // Clear the input buffer
+        document.getElementById("inputBet").value=""; 
+        document.getElementById("inputBet").setAttribute('placeholder', "Enter a positive number"); 
+
+        if (chips > 0 && chips <= bank) {
+
+            bank -= chips; 
+            document.getElementById("bank").innerHTML = `Bank: ${bank}`;
+            document.getElementById("pot").innerHTML = `Pot: ${calculateChips(movement, chips)}`;
+
+            document.getElementById('result').innerText = "";
+
+            // prevent user click the button while spinning 
+            document.getElementById("Game-Button").style.display = 'none';
+            document.getElementById("numbers").style.display = 'none';
+
+        
+            let randomDegree = Math.floor(Math.random() * 360) + 360 * 3; 
+            rotationDegree += randomDegree; 
+
+            document.getElementById('rouletteWheel').style.transform = 'rotate(' + rotationDegree + 'deg)';
+
+
+            setTimeout(function() {
+                let winningNumber = calculateWinningNumber(rotationDegree);
+                let result = winOrLose(winningNumber, movement, number);
+                document.getElementById('result').innerHTML += `You ${result}`;
+                document.getElementById("bank").innerHTML = `Bank: ${bank}`;
+                document.getElementById("pot").innerHTML = `Pot: ${0}`;
+                
+                // prevent user click the button while spinning 
+                document.getElementById("Game-Button").style.display = 'block';
+                
+                // sotre the bank value into local storage
+                localStorage.setItem("bank", bank);
+
+                recordProcess(movement, winningNumber , result, bank);
+
+            }, 3000); 
+            
+
+        } else {
+            alert("Please enter a valid bet amount larger than 0 and less than or equal to your bank.\n If you are bankrupt, please press reset to play again.");
+        }
+    }
+
+    function showNumbers() {
+        document.getElementById('result').innerText = "";
+        document.getElementById("Game-Button").style.display = 'none';
+        document.getElementById("numbers").style.display = 'block';
+    }
+
+
+    function calculateWinningNumber(degrees) {
+        const degreesPerNumber = 360 / 38;
+        const normalizedDegree = degrees % 360; 
+        const index = Math.floor(normalizedDegree / degreesPerNumber);
+
+        return numbers[index]; 
+    }
+
+
+    function calculateChips(movement, chips){
+        if(movement == 'Exact'){
+            return chips*8;
+        }else{
+            return chips *2;
+        }
+    }
+
+    function winOrLose(winningNumber, movement, number){
+        if(movement == "Even"){
+            if(winningNumber%2==0){
+                bank += chips*2;
+                return "win"; 
+            }else{
+                return "lose"; 
+            }
+        }else if(movement == 'Odd'){
+            if(winningNumber%2==1){
+                bank += chips*2;
+                return "win"; 
+            }else{
+                return "lose"; 
+            }
+        }else if(movement == 'Red'){
+            if(redNumbers.includes(winningNumber)){
+                bank += chips*2;
+                return "win"; 
+            }else{
+                return "lose";
+            }
+        }else if(movement == 'Black'){
+            if(blackNumbers.includes(winningNumber)){
+                bank += chips*2;
+                return "win"; 
+            }else{
+                return "lose";
+            }
+        }else if(movement == 'Big'){
+            if(winningNumber>=19){
+                bank += chips*2;
+                return "win"; 
+            }else{
+                return "lose";
+            }
+        }else if(movement == 'Small'){
+            if(winningNumber<19 && winningNumber!=0){
+                bank += chips*2;
+                return "win"; 
+            }else{
+                return "lose";
+            }             
+        }else if(movement == 'Exact'){
+            if(winningNumber == number){
+                bank+= chips*35; 
+                return "win"; 
+            }else{
+                return "lose";
+            }
+        }
+    }
+
+    // To show or hide the game history table
+    function showProcessTable(){
+        if(document.getElementById("processTable").style.display == "none"){
+            document.getElementById("processTable").style.display = "inline-block"
+        }else{
+            document.getElementById("processTable").style.display = "none";
+        }
+    }
+
+    function recordProcess(action, movement, result, bank) {
+        stepCounter++;
+        let table = document.getElementById("processTable");
+        let newRow = table.insertRow(-1);
+        newRow.innerHTML = `<td>${stepCounter}</td><td>${action}</td><td>${movement}</td><td>${result}</td><td>${bank}</td>`;
+        
+        // Check table size and remove the oldest row if it exceeds 20
+        if (table.rows.length > 21) { 
+            table.deleteRow(1); 
+        }
+    }
+
+</script>
+</html>
