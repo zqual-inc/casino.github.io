@@ -140,6 +140,7 @@
 
             document.getElementById('rouletteWheel').style.transform = 'rotate(' + rotationDegree + 'deg)';
 
+
             setTimeout(function() {
                 let result = winOrLose(winningNumber, movement, number);
                 document.getElementById('result').innerHTML += `You ${result}`;
@@ -166,15 +167,6 @@
         document.getElementById('result').innerText = "";
         document.getElementById("Game-Button").style.display = 'none';
         document.getElementById("numbers").style.display = 'block';
-    }
-
-
-    function calculateWinningNumber(degrees) {
-        const degreesPerNumber = 360 / 38;
-        const normalizedDegree = degrees % 360; 
-        const index = Math.floor(normalizedDegree / degreesPerNumber);
-
-        return numbers[index]; 
     }
 
 
