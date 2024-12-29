@@ -60,7 +60,7 @@
 </body>
 
 <script>
-    let rotationDegree = -360/76, chips, stepCounter=0;
+    let rotationDegree = 0, chips, stepCounter=0, prevCompRotationDegree = 360;
 
     const numbers = [
         0, 1, 13, 36, 24, 3, 15, 34, 22, 5, 17, 32, 20, 7, 11, 30, 26, 9, 28,
@@ -132,15 +132,15 @@
             document.getElementById("Game-Button").style.display = 'none';
             document.getElementById("numbers").style.display = 'none';
 
-        
-            let randomDegree = Math.floor(Math.random() * 360) + 360 * 3; 
-            rotationDegree += randomDegree; 
+            let winningNumber = Math.floor(Math.random() * 37); 
+            let index = numbers.indexOf(winningNumber);
+
+            rotationDegree += 360 * 2 + (360/38) * index + prevCompRotationDegree; 
+            prevCompRotationDegree = 360 - (360/38) * index;
 
             document.getElementById('rouletteWheel').style.transform = 'rotate(' + rotationDegree + 'deg)';
 
-
             setTimeout(function() {
-                let winningNumber = calculateWinningNumber(rotationDegree);
                 let result = winOrLose(winningNumber, movement, number);
                 document.getElementById('result').innerHTML += `You ${result}`;
                 document.getElementById("bank").innerHTML = `Bank: ${bank}`;
